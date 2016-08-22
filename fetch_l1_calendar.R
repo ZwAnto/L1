@@ -1,7 +1,5 @@
 install.packages(c("rvest","stringr"))
 
-Sys.setenv(http_proxy="zscaler-paris.pj.fr:80")
-
 library(rvest)
 library(stringr)
 
@@ -9,22 +7,22 @@ fetch_l1_calendar <- function(saison=100){
 
 calendar=NULL # initialisaiton du data.frame de sortie
 
-# boucle sur les journée
+# boucle sur les journÃ©e
 for (j in 1:38){
   
-  # création de l'url de requete
+  # crÃ©ation de l'url de requete
   url <- paste0("http://www.lfp.fr/ligue1/competitionPluginCalendrierResultat/changeCalendrierJournee?sai=",saison,"&jour=",j)
   
   # extraction du code html
   site <- read_html(url)
  
-  # nombre de jour dans la journée
+  # nombre de jour dans la journÃ©e
   site %>% 
     html_node("body") %>%
     as.character() %>%
     str_count("<h4>") -> n_day
   
-  # pour chaque jour récupération de la date et des match
+  # pour chaque jour rÃ©cupÃ©ration de la date et des match
   for (i in 1:n_day){
     
     # xpath match
@@ -33,13 +31,13 @@ for (j in 1:38){
     # xpath date
     xpath2<-paste0('//*[@id="tableaux_rencontres"]/div/h4[',i,']')
       
-    # récupération des matchs
+    # rÃ©cupÃ©ration des matchs
     site %>% 
       html_node("body") %>%
       html_node(xpath=xpath) %>%
      html_table -> temp
     
-    # récupération de la date
+    # rÃ©cupÃ©ration de la date
     site %>% 
       html_node("body") %>%
       html_node(xpath=xpath2) %>%
@@ -56,7 +54,7 @@ calendar <- calendar[,c(1,2,3,5,7)]
 # renomage des colones
 colnames(calendar) <- c("date","time","home","score","away")
 
-# séparation du score en deux variables
+# sÃ©paration du score en deux variables
 calendar <- cbind(calendar,str_split_fixed(calendar$score," - ",n = 2))
 
 # supression de l'ancienne colone de score
